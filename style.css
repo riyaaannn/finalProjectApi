@@ -1,0 +1,109 @@
+// Selecting item image and sound elements
+const itemImage = document.getElementById('item-nav');
+const clickSound = document.getElementById('click-sound');
+
+// Add event listener for carousel functionality
+itemImage.addEventListener('click', () => {
+    clickSound.currentTime = 0;
+    clickSound.play();
+
+    const images = document.querySelectorAll('.carousel img');
+    let currentIndex = 0;
+
+    setInterval(() => {
+        images[currentIndex].classList.remove('active');
+        currentIndex = (currentIndex + 1) % images.length;
+        images[currentIndex].classList.add('active');
+    }, 3000);
+});
+
+// Fetch and display products using the Fake Store API
+fetch('https://fakestoreapi.com/products')
+    .then(response => response.json())
+    .then(data => {
+        const productList = document.getElementById('product-list');
+        data.slice(0, 6).forEach(product => {
+            const productBox = `
+                <div class="box">
+                    <div class="image">
+                        <img src="${product.image}" alt="${product.title}">
+                        <div class="icons">
+                            <a href="#" class="fas fa-heart"></a>
+                            <a href="#" class="cart-btn">Add to Cart</a>
+                            <button class="fas fa-share share-btn"
+                                data-url="https://yourwebsite.com/product/${product.id}"
+                                data-title="${product.title}">
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <h3>${product.title}</h3>
+                        <div class="price">$${product.price}</div>
+                    </div>
+                </div>`;
+            productList.innerHTML += productBox;
+        });
+
+        // Attach click event to share buttons
+        document.querySelectorAll('.share-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const url = this.dataset.url;
+                const title = this.dataset.title;
+
+                let platform = prompt('Choose a platform to share (facebook, twitter, linkedin):').toLowerCase();
+                let shareUrl = '';
+
+                if (platform === 'facebook') {
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                } else if (platform === 'twitter') {
+                    shareUrl = `https://twitter.com/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`;
+                } else if (platform === 'linkedin') {
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+                } else {
+                    alert('Invalid platform! Please choose either facebook, twitter, or linkedin.');
+                    return;
+                }
+
+                // Open the sharing URL in a new tab
+                if (shareUrl) {
+                    window.open(shareUrl, '_blank');
+                }
+            });
+        });
+    });
+
+// Fetch and display reviews using a placeholder API
+fetch('https://jsonplaceholder.typicode.com/comments')
+    .then(response => response.json())
+    .then(data => {
+        const reviewList = document.getElementById('review-list');
+        data.slice(0, 5).forEach(review => {
+            const reviewItem = `
+                <div class="item">
+                    <div class="stars">
+                        ${'★'.repeat(5)}
+                    </div>
+                    <p>${review.body}</p>
+                    <div class="user-info">
+                        <h3>${review.name}</h3>
+                        <span>${review.email}</span>
+                    </div>
+                </div>`;
+            reviewList.innerHTML += reviewItem;
+        });
+    });
+
+// Handle contact form submission (sending to a mock endpoint)
+document.getElementById('contact-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify(Object.fromEntries(formData)),
+        headers: { 'Content-Type': 'application/json' },
+    })
+        .then(response => response.json())
+        .then(data => alert('Message Sent!'))
+        .catch(error => console.error('Error:', error));
+});

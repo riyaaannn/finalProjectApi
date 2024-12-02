@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Quality Goods</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <input type="checkbox" name="" id="toggler">
+    <label for="toggler" class="fas fa-bars"></label>
+    <a href="#" class="logo">The Quality Goods<span>.</span></a>
+    <nav class="navbar">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#products">Products</a>
+        <a href="#review">Review</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <div class="icons">
+        <a href="#" class="fas fa-heart"></a>
+        <a href="#" class="fas fa-shopping-cart"></a>
+        <a href="#" class="fas fa-user"></a>
+    </div>
+</header>
+
+<section class="home" id="home">
+    <div class="content">
+        <h3>A THRIFT AND CONSIGNMENT STORE</h3>
+        <p>Are you overwhelmed with fast fashion? We are here for you! We’ll make it easier to buy and sell pre-owned clothes. To look after every item on its journey from one wardrobe to the next. To turn secondhand into pre-loved.</p>
+        <a href="#products" class="btn">Shop Now</a>
+    </div>
+</section>
+
+<section class="about" id="about">
+    <h1 class="heading"><span>About Us</span></h1>
+    <div class="row">
+        <div class="video-container">
+            <video src="About Us.mp4" loop autoplay muted></video>
+            <h3>Quality Goods Sellers</h3>
+        </div>
+        <div class="content">
+            <h3>Why choose us?</h3>
+            <p>The Quality Goods team is dedicated to fostering community engagement by building connections between merchants and customers. We aim to provide an exceptional and convenient experience for sellers while creating an inclusive event for the local community.</p>
+        </div>
+    </div>
+</section>
+
+<section class="products" id="products">
+    <h1 class="heading">Latest <span>Products</span></h1>
+    <div class="box-container" id="product-list">
+        <!-- Products with share buttons will be dynamically loaded here -->
+    </div>
+</section>
+
+<section class="review" id="review">
+    <h1 class="heading">Customer's<span> Review</span></h1>
+    <div id="review-list">
+        <!-- Reviews will be dynamically loaded using a mock review API -->
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <h1 class="heading"><span>Contact</span> Us</h1>
+    <div class="row">
+        <form id="contact-form">
+            <input type="text" placeholder="Name" class="box" name="name" required>
+            <input type="email" placeholder="Email" class="box" name="email" required>
+            <textarea name="message" class="box" placeholder="Message" cols="30" rows="10" required></textarea>
+            <input type="submit" value="Send Message" class="btn">
+        </form>
+    </div>
+</section>
+
+<script>
+    // Fetch and display products using the Fake Store API
+    fetch('https://fakestoreapi.com/products')
+        .then(response => response.json())
+        .then(data => {
+            const productList = document.getElementById('product-list');
+            data.slice(0, 6).forEach(product => {
+                const productBox = `
+                    <div class="box">
+                        <div class="image">
+                            <img src="${product.image}" alt="${product.title}">
+                            <div class="icons">
+                                <a href="#" class="fas fa-heart"></a>
+                                <a href="#" class="cart-btn">Add to Cart</a>
+                                <button class="fas fa-share share-btn" 
+                                    data-url="https://riyaaannn.github.io/finalProjectApi/${product.id}" 
+                                    data-title="${product.title}" 
+                                    data-description="${product.description}">
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h3>${product.title}</h3>
+                            <div class="price">$${product.price}</div>
+                        </div>
+                    </div>`;
+                productList.innerHTML += productBox;
+            });
+
+            // Attach click event to share buttons
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const url = this.dataset.url;
+                    const title = this.dataset.title;
+                    const description = this.dataset.description;
+
+                    const shareOptions = `
+                        Share this product:
+                        - Twitter: https://twitter.com/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}
+                        - Facebook: https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}
+                        - LinkedIn: https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}
+                    `;
+                    alert(shareOptions); // Or replace with a modal for better UX
+                });
+            });
+        });
+
+    // Fetch and display reviews using a placeholder API
+    fetch('https://jsonplaceholder.typicode.com/comments')
+        .then(response => response.json())
+        .then(data => {
+            const reviewList = document.getElementById('review-list');
+            data.slice(0, 5).forEach(review => {
+                const reviewItem = `
+                    <div class="item">
+                        <div class="stars">
+                            ${'★'.repeat(5)}
+                        </div>
+                        <p>${review.body}</p>
+                        <div class="user-info">
+                            <h3>${review.name}</h3>
+                            <span>${review.email}</span>
+                        </div>
+                    </div>`;
+                reviewList.innerHTML += reviewItem;
+            });
+        });
+
+    // Handle contact form submission (sending to a mock endpoint)
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch('https://jsonplaceholder.typicode.com/posts', {
+            method: 'POST',
+            body: JSON.stringify(Object.fromEntries(formData)),
+            headers: { 'Content-Type': 'application/json' },
+        })
+            .then(response => response.json())
+            .then(data => alert('Message Sent!'))
+            .catch(error => console.error('Error:', error));
+    });
+</script>
+
+</body>
+</html>
