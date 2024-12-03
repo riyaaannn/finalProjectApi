@@ -78,6 +78,12 @@ fetch('https://jsonplaceholder.typicode.com/comments')
             .then(response => response.json())
             .then(product => {
                 document.title = product.title;
+    
+                document.querySelector('meta[property="og:title"]').setAttribute("content", product.title);
+                document.querySelector('meta[property="og:description"]').setAttribute("content", product.description);
+                document.querySelector('meta[property="og:image"]').setAttribute("content", product.image);
+                document.querySelector('meta[property="og:url"]').setAttribute("content", `https://riyaaannn.github.io/finalProjectApi/products.html?id=${product.id}`);
+    
                 const productInfo = document.getElementById('product-info');
                 productInfo.innerHTML = `
                     <h1>Product: ${product.title}</h1>
@@ -85,7 +91,7 @@ fetch('https://jsonplaceholder.typicode.com/comments')
                     <p>Description: ${product.description}</p>
                     <div class="price" style="font-size: 1.5em; color: #e67e22;">Price: $${product.price}</div>
                 `;
-
+    
                 const shareBtn = document.getElementById('share-btn');
                 const productUrl = `https://riyaaannn.github.io/finalProjectApi/products.html?id=${product.id}`;
                 shareBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(productUrl)}`;
@@ -95,6 +101,7 @@ fetch('https://jsonplaceholder.typicode.com/comments')
     } else {
         document.getElementById('product-info').innerText = 'Product ID is missing in the URL.';
     }
+    
 
 // Handle contact form submission (sending to a mock endpoint)
 document.getElementById('contact-form').addEventListener('submit', function (e) {
