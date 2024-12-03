@@ -77,6 +77,7 @@ fetch('https://jsonplaceholder.typicode.com/comments')
         fetch(`https://fakestoreapi.com/products/${productId}`)
             .then(response => response.json())
             .then(product => {
+                document.title = product.title;
                 const productInfo = document.getElementById('product-info');
                 productInfo.innerHTML = `
                     <h1>Product: ${product.title}</h1>
